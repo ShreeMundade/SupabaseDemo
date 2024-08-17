@@ -1,0 +1,56 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Blog {
+  author      Author?  @relation(fields: [authorId], references: [id])
+  authorId    String?
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  name        String?
+  posts       Post[]
+  updatedAt   DateTime @updatedAt
+}
+
+model Post {
+  author      Author?   @relation(fields: [authorId], references: [id])
+  authorId    String?
+  blog        Blog?     @relation(fields: [blogId], references: [id])
+  blogId      String?
+  comments    Comment[]
+  content     String?
+  createdAt   DateTime  @default(now())
+  id          String    @id @default(cuid())
+  publishedAt DateTime?
+  title       String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  author    Author?  @relation(fields: [authorId], references: [id])
+  authorId  String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    String?
+  text      String?
+  updatedAt DateTime @updatedAt
+}
+
+model Author {
+  blogs     Blog[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  email     String?
+  firstName String?
+  id        String    @id @default(cuid())
+  lastName  String?
+  posts     Post[]
+  updatedAt DateTime  @updatedAt
+}
